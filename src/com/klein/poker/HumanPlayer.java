@@ -8,8 +8,8 @@ public class HumanPlayer extends Player{
             return;
         }
         if(potInvestment < game.getMaxAmount()){
-            System.out.println("Do you want to call, fold, or raise?");
-            System.out.println("c for call, f for fold, r for raise");
+            System.out.println("Do you want to call, fold, or reraise?");
+            System.out.println("c for call, f for fold, r for reraise");
             boolean done = true;
             while (done) {
                 Scanner sc = new Scanner(System.in);
@@ -56,8 +56,9 @@ public class HumanPlayer extends Player{
         return true;
     }
     @Override
-    public void describeHand(){
+    public void describeHand() throws InterruptedException{
         System.out.println("You have the " + hand.toString());
+        Thread.sleep(2000);
     }
     @Override
     public String getName(){

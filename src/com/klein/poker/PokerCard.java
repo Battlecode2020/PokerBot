@@ -16,4 +16,10 @@ public class PokerCard {
     public Suit getSuit(){
         return suit;
     }
+    public boolean equals(PokerCard other){
+        if(getSuit() == other.getSuit() && getCardNumber() == other.getCardNumber()){
+            return true;
+        }
+        return false;
+    }
 }

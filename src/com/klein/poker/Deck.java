@@ -1,6 +1,7 @@
 package com.klein.poker;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Deck {
     ArrayList<PokerCard> deck;
@@ -19,5 +20,18 @@ public class Deck {
         PokerCard card = deck.get(x);
         deck.remove(x);
         return card;
+    }
+    public void remove(PokerCard card){
+        for(int i = 0; i < deck.size(); i++){
+            if(deck.get(i).equals(card)){
+                deck.remove(i);
+            }
+        }
+    }
+    public int getSize(){
+        return deck.size();
+    }
+    public PokerCard getCard(int x){
+        return deck.get(x);
     }
 }
