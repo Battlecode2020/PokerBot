@@ -6,21 +6,34 @@ public class RobotPlayer extends Player{
         if(handState == HandState.ALL_IN){
             return;
         }
+        Range oppRange = new Range(hand);
         if(game.getRound() == RoundOfPlay.PRE_FLOP){
             passivePlay(game);
             return;
         }
         if(game.getRound() == RoundOfPlay.FLOP){
             passivePlay(game);
-            System.out.println(getOddsFlop(game,new PersonalHand(new PokerCard(Suit.SPADES, CardNumber.TWO), new PokerCard(Suit.HEARTS, CardNumber.TWO))));
+            oppRange.removeCard(game.getFirstFlop());
+            oppRange.removeCard(game.getSecondFlop());
+            oppRange.removeCard(game.getThirdFlop());
+            System.out.println(oddsVsRangeFlop(game, oppRange));
         }
         if(game.getRound() == RoundOfPlay.TURN){
             passivePlay(game);
-            System.out.println(getOddsTurn(game,new PersonalHand(new PokerCard(Suit.SPADES, CardNumber.TWO), new PokerCard(Suit.HEARTS, CardNumber.TWO))));
+            oppRange.removeCard(game.getFirstFlop());
+            oppRange.removeCard(game.getSecondFlop());
+            oppRange.removeCard(game.getThirdFlop());
+            oppRange.removeCard(game.getTurn());
+            System.out.println(oddsVsRangeTurn(game, oppRange));
         }
         if(game.getRound() == RoundOfPlay.RIVER){
             passivePlay(game);
-            System.out.println(getOddsRiver(game,new PersonalHand(new PokerCard(Suit.SPADES, CardNumber.TWO), new PokerCard(Suit.HEARTS, CardNumber.TWO))));
+            oppRange.removeCard(game.getFirstFlop());
+            oppRange.removeCard(game.getSecondFlop());
+            oppRange.removeCard(game.getThirdFlop());
+            oppRange.removeCard(game.getTurn());
+            oppRange.removeCard(game.getRiver());
+            System.out.println(oddsVsRangeRiver(game, oppRange));
         }
 
     }
@@ -46,5 +59,32 @@ public class RobotPlayer extends Player{
         } else{
             check();
         }
+    }
+    public double oddsVsRangeFlop(Game game, Range range){
+        double sum = 0.0;
+        int hands = 0;
+        for(int i = 0; i < range.getRange().size(); i++){
+            sum = sum + getOddsFlop(game, range.getRange().get(i));
+            hands++;
+        }
+        return sum / ((double) hands);
+    }
+    public double oddsVsRangeTurn(Game game, Range range){
+        double sum = 0.0;
+        int hands = 0;
+        for(int i = 0; i < range.getRange().size(); i++){
+            sum = sum + getOddsTurn(game, range.getRange().get(i));
+            hands++;
+        }
+        return sum / ((double) hands);
+    }
+    public double oddsVsRangeRiver(Game game, Range range){
+        double sum = 0.0;
+        int hands = 0;
+        for(int i = 0; i < range.getRange().size(); i++){
+            sum = sum + getOddsRiver(game, range.getRange().get(i));
+            hands++;
+        }
+        return sum / ((double) hands);
     }
 }
