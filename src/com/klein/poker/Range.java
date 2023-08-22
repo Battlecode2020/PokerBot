@@ -1,6 +1,7 @@
 package com.klein.poker;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Range {
     ArrayList<PersonalHand> hands;
@@ -32,5 +33,12 @@ public class Range {
     }
     public ArrayList<PersonalHand> getRange(){
         return hands;
+    }
+    //should return the top percent of personal hands in the Range
+    public void topPercentage(int percent){
+    }
+    //should return the bottom percent of personal hands in the range
+    public void bottomPercentage(int percent){
+
     }
 }

@@ -7,6 +7,7 @@ public class HumanPlayer extends Player{
         if(handState == HandState.ALL_IN){
             return;
         }
+        System.out.println("Pot is " + game.getPot());
         if(potInvestment < game.getMaxAmount()){
             System.out.println("Do you want to call, fold, or reraise?");
             System.out.println("c for call, f for fold, r for reraise");

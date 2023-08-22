@@ -1,39 +1,138 @@
 package com.klein.poker;
 
 public class RobotPlayer extends Player{
+    Range oppRange;
+    Range myRange;
+    boolean bluff = false;
     @Override
     public void doTurn(Game game) {
         if(handState == HandState.ALL_IN){
             return;
         }
-        Range oppRange = new Range(hand);
+        if(game.isSomeoneAllIn()){
+            int amountToCall = game.getMaxAmount() - potInvestment;
+            if(game.getRound()==RoundOfPlay.PRE_FLOP){
+                continuePlay(game);
+                return;
+            }
+            if(game.getRound() == RoundOfPlay.FLOP){
+                oppRange.removeCard(game.getFirstFlop());
+                oppRange.removeCard(game.getSecondFlop());
+                oppRange.removeCard(game.getThirdFlop());
+                double odds = oddsVsRangeFlop(game, oppRange);
+                if(odds > ((double) game.getPot() / (double) (2 * game.getPot() + amountToCall))){
+                    call(amountToCall);
+                } else{
+                    fold();
+                }
+                return;
+            }
+            if(game.getRound() == RoundOfPlay.TURN){
+                oppRange.removeCard(game.getTurn());
+                double odds = oddsVsRangeTurn(game, oppRange);
+                if(odds > ((double) game.getPot() / (double) (2 * game.getPot() + amountToCall))){
+                    call(amountToCall);
+                } else{
+                    fold();
+                }
+                return;
+            }
+            if(game.getRound() == RoundOfPlay.RIVER){
+                oppRange.removeCard(game.getRiver());
+                double odds = oddsVsRangeRiver(game, oppRange);
+                if(odds > ((double) game.getPot() / (double) (2 * game.getPot() + amountToCall))){
+                    call(amountToCall);
+                } else{
+                    fold();
+                }
+                return;
+
+            }
+        }
+        System.out.println("Pot is " + game.getPot());
         if(game.getRound() == RoundOfPlay.PRE_FLOP){
-            passivePlay(game);
+            continuePlay(game);
             return;
         }
         if(game.getRound() == RoundOfPlay.FLOP){
-            passivePlay(game);
+            System.out.print(ANSI_RED + "computer is thinking..." + ANSI_RESET);
             oppRange.removeCard(game.getFirstFlop());
             oppRange.removeCard(game.getSecondFlop());
             oppRange.removeCard(game.getThirdFlop());
-            System.out.println(oddsVsRangeFlop(game, oppRange));
+            double odds = oddsVsRangeFlop(game, oppRange);
+            for(int i = 0; i<23; i++){
+                System.out.print("\b");
+            }
+            if(Math.random() > .8){
+                if(odds > .6){
+                    continuePlay(game);
+                    return;
+                } else if(odds < .35){
+                    weakPlay(game);
+                    return;
+                } else {
+                    continuePlay(game);
+                    return;
+                }
+            }
+            if(odds > .6){
+                raise(game.getPot());
+            } else if(odds < .4){
+                if(bluff && Math.random() > 0.3){
+                    aggressivePlay(game);
+                } else{
+                    weakPlay(game);
+                }
+            } else {
+                continuePlay(game);
+            }
+
         }
         if(game.getRound() == RoundOfPlay.TURN){
-            passivePlay(game);
-            oppRange.removeCard(game.getFirstFlop());
-            oppRange.removeCard(game.getSecondFlop());
-            oppRange.removeCard(game.getThirdFlop());
             oppRange.removeCard(game.getTurn());
-            System.out.println(oddsVsRangeTurn(game, oppRange));
+            double odds = oddsVsRangeTurn(game, oppRange);
+            if(Math.random() > .8){
+                if(odds > .6){
+                    continuePlay(game);
+                    return;
+                } else if(odds < .35){
+                    weakPlay(game);
+                    return;
+                } else {
+                    continuePlay(game);
+                    return;
+                }
+            }
+            if(odds > .7){
+                aggressivePlay(game);
+            } else if(odds < .3){
+                if(bluff && Math.random() > 0.3){
+                    aggressivePlay(game);
+                } else{
+                        weakPlay(game);
+                }
+            } else {
+                continuePlay(game);
+            }
+
         }
         if(game.getRound() == RoundOfPlay.RIVER){
-            passivePlay(game);
-            oppRange.removeCard(game.getFirstFlop());
-            oppRange.removeCard(game.getSecondFlop());
-            oppRange.removeCard(game.getThirdFlop());
-            oppRange.removeCard(game.getTurn());
             oppRange.removeCard(game.getRiver());
-            System.out.println(oddsVsRangeRiver(game, oppRange));
+            double odds = oddsVsRangeRiver(game, oppRange);
+
+            if(odds > .75){
+                aggressivePlay(game);
+            } else if(odds < .4 && odds > .2){
+                weakPlay(game);
+            } else if(odds < .2){
+                if(bluff){
+                    aggressivePlay(game);
+                } else{
+                    weakPlay(game);
+                }
+            } else {
+                continuePlay(game);
+            }
         }
 
     }
@@ -53,7 +152,7 @@ public class RobotPlayer extends Player{
     public String getNameFinal(){
         return "Computer";
     }
-    public void passivePlay(Game game){
+    public void continuePlay(Game game){
         if(potInvestment < game.getMaxAmount()){
             call(game.getMaxAmount()-potInvestment);
         } else{
@@ -86,5 +185,28 @@ public class RobotPlayer extends Player{
             hands++;
         }
         return sum / ((double) hands);
+    }
+    public void weakPlay(Game game){
+        if(potInvestment < game.getMaxAmount()){
+            fold();
+        } else{
+            check();
+        }
+    }
+    @Override
+    public void joinHand(){
+        handState = HandState.IN_HAND;
+        potInvestment = 0;
+        this.oppRange = new Range(hand);
+        if(Math.random() > .85){
+            bluff = true;
+        }
+    }
+    public void aggressivePlay(Game game){
+        if((chipStack + potInvestment) < game.getMaxAmount()){
+            call(chipStack);
+        } else {
+            raise(game.getPot());
+        }
     }
 }

@@ -83,5 +83,13 @@ public class Game {
     public void setRound(RoundOfPlay current){
         round = current;
     }
+    public boolean isSomeoneAllIn(){
+        for(Player player : playersInGame ){
+            if(player.getHandState() == HandState.ALL_IN){
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

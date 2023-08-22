@@ -52,7 +52,7 @@ public class GamePlayerTwoPeople {
 
             players.get(0).doTurn(game);
             players.get(1).doTurn(game);
-            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment()){
+            while((players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment()) || (players.get(1).getHandState() == HandState.ALL_IN && players.get(1).getPotInvestment() > players.get(0).getPotInvestment()) ){
                 players.get(0).doTurn(game);
                 if(players.get(0).getHandState() == HandState.NOT_IN_HAND || players.get(0).getPotInvestment() == players.get(1).getPotInvestment()){
                     break;
@@ -65,7 +65,11 @@ public class GamePlayerTwoPeople {
                 } else{
                     players.get(0).receivePot(game.getPot());
                 }
-                System.out.println(ANSI_WHITE + "RESHUFFLING!!!!" + ANSI_RESET);
+                reshuffle();
+                players.add(2, players.get(1));
+                players.add(3, players.get(0));
+                players.remove(0);
+                players.remove(0);
                 continue;
             }
 
@@ -74,7 +78,7 @@ public class GamePlayerTwoPeople {
             System.out.println("\nThe flop is:\n" + card1 + "\n" +card2 + "\n" +card3);
             players.get(1).doTurn(game);
             players.get(0).doTurn(game);
-            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment()){
+            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment() || (players.get(0).getHandState() == HandState.ALL_IN && players.get(0).getPotInvestment() > players.get(1).getPotInvestment())){
                 players.get(1).doTurn(game);
                 if(players.get(1).getHandState() == HandState.NOT_IN_HAND || players.get(0).getPotInvestment() == players.get(1).getPotInvestment()){
                     break;
@@ -87,7 +91,11 @@ public class GamePlayerTwoPeople {
                 } else{
                     players.get(0).receivePot(game.getPot());
                 }
-                System.out.println(ANSI_WHITE + "RESHUFFLING!!!!" + ANSI_RESET);
+                reshuffle();
+                players.add(2, players.get(1));
+                players.add(3, players.get(0));
+                players.remove(0);
+                players.remove(0);
                 continue;
             }
 
@@ -96,7 +104,7 @@ public class GamePlayerTwoPeople {
             System.out.println("\nThe turn is:\n" + card4);
             players.get(1).doTurn(game);
             players.get(0).doTurn(game);
-            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment()){
+            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment() || (players.get(0).getHandState() == HandState.ALL_IN && players.get(0).getPotInvestment() > players.get(1).getPotInvestment())){
                 players.get(1).doTurn(game);
                 if(players.get(1).getHandState() == HandState.NOT_IN_HAND || players.get(0).getPotInvestment() == players.get(1).getPotInvestment()){
                     break;
@@ -109,7 +117,11 @@ public class GamePlayerTwoPeople {
                 } else{
                     players.get(0).receivePot(game.getPot());
                 }
-                System.out.println(ANSI_WHITE + "RESHUFFLING!!!!" + ANSI_RESET);
+                reshuffle();
+                players.add(2, players.get(1));
+                players.add(3, players.get(0));
+                players.remove(0);
+                players.remove(0);
                 continue;
             }
 
@@ -118,7 +130,7 @@ public class GamePlayerTwoPeople {
             System.out.println("\nThe river is:\n" + card5);
             players.get(1).doTurn(game);
             players.get(0).doTurn(game);
-            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment()){
+            while(players.get(0).getHandState() == HandState.IN_HAND && players.get(1).getHandState() == HandState.IN_HAND && players.get(0).getPotInvestment() != players.get(1).getPotInvestment() || (players.get(0).getHandState() == HandState.ALL_IN && players.get(0).getPotInvestment() > players.get(1).getPotInvestment())){
                 players.get(1).doTurn(game);
                 if(players.get(1).getHandState() == HandState.NOT_IN_HAND || players.get(0).getPotInvestment() == players.get(1).getPotInvestment()){
                     break;
@@ -131,15 +143,19 @@ public class GamePlayerTwoPeople {
                 } else{
                     players.get(0).receivePot(game.getPot());
                 }
-                System.out.println(ANSI_WHITE + "RESHUFFLING!!!!" + ANSI_RESET);
+                reshuffle();
+                players.add(2, players.get(1));
+                players.add(3, players.get(0));
+                players.remove(0);
+                players.remove(0);
                 continue;
             }
             SevenHand zero = new SevenHand(players.get(0).getHand(),card1,card2,card3,card4,card5);
             SevenHand one = new SevenHand(players.get(1).getHand(), card1,card2,card3,card4,card5);
             HandStrength zeroStrength = zero.getBestHand();
             HandStrength oneStrength = one.getBestHand();
-            System.out.println(players.get(0).getName() + " has " + zeroStrength);
-            System.out.println(players.get(1).getName() + " has " + oneStrength);
+            System.out.println(players.get(0).getNameFinal() + " has " + zeroStrength);
+            System.out.println(players.get(1).getNameFinal() + " has " + oneStrength);
             for(Player player : players){
                 if(!player.isHuman()){
                     player.describeHand();
@@ -183,10 +199,15 @@ public class GamePlayerTwoPeople {
 
 
         }
+        if(human.getChipStack() > robot.getChipStack()) {
+            System.out.println(ANSI_GREEN + "GAME OVER! YOU WIN!!" );
+        } else{
+            System.out.println(ANSI_RED + "GAME OVER! YOU LOSE! ROBOTS RULE!" );
+        }
     }
     public static void reshuffle() throws InterruptedException{
         Thread.sleep(3000);
-        for(int i = 0; i < 20; i++){
+        for(int i = 0; i <= 20; i++){
             int j = 0;
             if(i > 9){
                 j = 20 - i;

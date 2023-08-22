@@ -12,7 +12,7 @@ public abstract class Player {
     public static final String ANSI_PURPLE = "\u001B[35m";
     public static final String ANSI_CYAN = "\u001B[36m";
     public static final String ANSI_WHITE = "\u001B[37m";
-    int chipStack = 100000;
+    int chipStack = 50;
     PersonalHand hand;
     HandState handState;
     boolean isTurn;
@@ -121,7 +121,7 @@ public abstract class Player {
     }
     public abstract String getNameFinal();
     public void receivePot(int pot){
-        System.out.println(getName() + "receives pot of " + pot);
+        System.out.println(getNameFinal() + "receives pot of " + pot);
         chipStack += pot;
     }
     public double getOddsFlop(Game game, PersonalHand opponent){
